@@ -2,10 +2,21 @@
 
     Writer: Tal Aharon
 
-    Reviewer: .
+    Reviewer: Itamar.
 
     Date: 28.08.2023
 
+*******************************************************************************
+
+                          Description:
+
+  This C code implements a user-space interface for Linux's Network Block Device 
+  (NBD). It provides functions to initialize an NBD driver, handle incoming requests, 
+  send responses, and manage resource cleanup. The code establishes bidirectional 
+  communication between the user and the driver using sockets and configures the 
+  NBD driver with specified block device size. It also includes signal handling 
+  and debugging features for enhanced reliability and error tracking during NBD 
+  driver operations.
 
 ******************************************************************************/
 #define _POSIX_C_SOURCE (200809L)
