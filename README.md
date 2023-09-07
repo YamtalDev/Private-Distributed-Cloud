@@ -1,4 +1,8 @@
-# NBD-BUSE-SERVER
+# P.D.C Private Distributed Cloud
+
+## Note: currently the project is at work, until now the NBD module is done.
+## Asynchronous Reactor is implemented right now in C++ and will be integrated soon
+## Next is the to connect the IOT's to the agent in the client device. 
 
 NBD-BUSE-SERVER is a Network Block Device (NBD) server implementation for Linux. It provides a user-space interface to manage NBD drivers, handle data requests, and interact with block devices. This README provides an overview of the project structure, how to compile and run it, and key functionalities.
 
