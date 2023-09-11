@@ -2,31 +2,16 @@
 
     Writer: Tal Aharon
 
-    Reviewer: Itamar.
-
     Date: 28.08.2023
-
-*******************************************************************************
-
-                          Description:
-
-  This C code serves as a Network Block Device (NBD) server implementation for 
-  Linux. It acts as an intermediary between an NBD driver and user interaction. 
-  The server handles incoming read and write requests, allowing data manipulation 
-  on a block device buffer. Users can issue commands via the console, including 
-  the option to quit the server and request debugging information. It employs a 
-  timeout mechanism to periodically check for activity and utilizes signal 
-  handling for disconnection requests. This server facilitate data transfer 
-  and management in NBD-based systems.
 
 ******************************************************************************/
 #include <stdio.h>       /* puts                 */ 
+#include <sys/select.h>  /* select               */
 #include <string.h>      /* memcpy               */
 #include <stdlib.h>      /* calloc, free         */
 #include <netinet/in.h>  /* u_int32_t, u_int64_t */
-#include <sys/select.h>  /* select  */
 #include <time.h>        /* time_t, time         */
-#include <unistd.h>      /*  */
+#include <unistd.h>      /*                      */
 #include <signal.h>      /* raise, SIGTERM       */
 
 #include "buse.h"        /* Internal API         */
