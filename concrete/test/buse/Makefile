@@ -15,7 +15,7 @@ PROJ_OUT= buse.out
 
 # list of ADDITIONAL compiler flags (prepended with "-" sign)
 #PROJ_CFLAGS = -Wunused-but-set-variable
-PROJ_CFLAGS= -DBUSE_DEBUG
+PROJ_CFLAGS= -DPDC_DEBUG
 PROJ_CPPFLAGS=
 
 #PROJ_MACROS = _BSD_SOURCE

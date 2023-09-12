@@ -83,15 +83,15 @@ int NbdOpen(const char *device_name, size_t m_size)
     int32_t nbd_dev = 0;
     int32_t nbd_sockets[2] = {0};
 
-    #ifdef BUSE_DEBUG
-    if(0 != NbdCreateLog("buse.log"))
+    #ifdef PDC_DEBUG
+    if(0 != NbdCreateLog("server.log"))
         return (1);
     #endif
 
     nbd_dev = NbdConfigure(nbd_sockets, device_name, m_size);
     if(-1 == nbd_dev)
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("NbdOpen: Set up failed", __LINE__);
         #endif
 
@@ -102,10 +102,10 @@ int NbdOpen(const char *device_name, size_t m_size)
     pid = fork();
     if(-1 == pid)
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("NbdOpen: Forking the driver failed", __LINE__);
-
         #endif
+
         NbdCleanUp(nbd_dev, nbd_sockets);
         return (BUSE_FAILURE);
     }
@@ -116,7 +116,7 @@ int NbdOpen(const char *device_name, size_t m_size)
         if((-1 == ioctl(nbd_dev, NBD_SET_SOCK, nbd_sockets[1])) ||
            (-1 == ioctl(nbd_dev, NBD_DO_IT)))
         {
-            #ifdef BUSE_DEBUG
+            #ifdef PDC_DEBUG
             NbdLog("NbdOpen: Driver is taken", __LINE__);
             #endif
 
@@ -125,7 +125,7 @@ int NbdOpen(const char *device_name, size_t m_size)
         }
 
         NbdClearDriver(nbd_dev, nbd_sockets);
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Driver exit successfully.", 0);
         #endif
 
@@ -149,7 +149,7 @@ buse_request_t *NbdGetRequest(int32_t nbd_socket)
 
     if(0 > ReadRequest(nbd_socket, (int8_t *)&sys_req, sizeof(sys_req)))
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("File system request error", __LINE__);
         #endif
 
@@ -161,7 +161,7 @@ buse_request_t *NbdGetRequest(int32_t nbd_socket)
     request = (nbd_buse_request_t *)calloc(request_size, sizeof(int8_t));
     if(NULL == request)
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Allocation failure of request", __LINE__);
         #endif
 
@@ -170,7 +170,7 @@ buse_request_t *NbdGetRequest(int32_t nbd_socket)
 
     if(-1 == NbdFillRequest(nbd_socket, request, &sys_req))
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Request fill failure", __LINE__);
         #endif
 
@@ -194,7 +194,7 @@ int NbdRequestDone(int nbd_socket, buse_request_t *request)
     size_t reply_size = read * request->len + sizeof(buse_reply_t);
     status = -1 * (0 > WriteReply(nbd_socket, (int8_t *)reply, reply_size));
 
-    #ifdef BUSE_DEBUG
+    #ifdef PDC_DEBUG
     NbdLog("Read request Bytes", request->len);
     #endif
 
@@ -218,7 +218,7 @@ static int32_t NbdFillRequest
     int32_t write = 0;
     request->req.data = request->data;
     request->req.len = ntohl(sys_req->len);
-    request->req.type = ntohl(sys_req->type);
+    request->req.type = (buse_command_t)ntohl(sys_req->type);
     request->req.from = ntohll(sys_req->from);
 
     request->rep.error = htonl(0);
@@ -228,7 +228,7 @@ static int32_t NbdFillRequest
     /* Evaluate if writing to the data buffer is needed */
     write = (BUSE_CMD_WRITE == request->req.type);
 
-    #ifdef BUSE_DEBUG
+    #ifdef PDC_DEBUG
     if(write)
         NbdLog("Write request Bytes", request->req.len);
     #endif
@@ -274,7 +274,7 @@ static void BlockDriverSignals(void)
     sigset_t sigset = {0};
     if(0 != sigfillset(&sigset) || 0 != sigprocmask(SIG_SETMASK, &sigset, NULL))
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Set driver signal mask failed", __LINE__);
         #endif
     }
@@ -293,7 +293,7 @@ static void SetSignalHandlers(void)
     status += 0 != SetSigaction(SIGTERM, &act);
     if(status)
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Failed to prepare signal masking", __LINE__);
         #endif
     }
@@ -314,7 +314,7 @@ static void NbdDisconnect(int32_t signal)
         close(nbd_dev);
         nbd_dev = -1;
 
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Successfully disconnected from device.", 0);
         #endif
     }
@@ -327,7 +327,7 @@ static void NbdClearDriver(int32_t nbd, int32_t *nbd_sockets)
     NbdCleanUp(nbd, nbd_sockets);
     ioctl(nbd_dev, NBD_DISCONNECT);
 
-    #ifdef BUSE_DEBUG
+    #ifdef PDC_DEBUG
     NbdLog("Clearing driver and disconnecting.", 0);
     #endif
 }
@@ -338,7 +338,7 @@ static int32_t NbdConfigure
     int32_t nbd = 0;
     if(-1 == socketpair(AF_UNIX, SOCK_STREAM, 0, nbd_sockets))
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Socket pair failure", __LINE__);
         #endif
 
@@ -350,7 +350,7 @@ static int32_t NbdConfigure
     if((-1 == nbd) || (-1 == ioctl(nbd, NBD_SET_SIZE, m_size))  ||
        (-1 == ioctl(nbd, NBD_CLEAR_SOCK)))
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Open, set size or clear socket failure", __LINE__);
         #endif
 

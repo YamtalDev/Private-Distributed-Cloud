@@ -1,6 +1,10 @@
 #ifndef __BUSE_H__
 #define __BUSE_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stddef.h> /* size_t             */
 #include <stdint.h> /* uint64_t, uint32_t */
 #define DRIVER_EXIT_STATUS (-2)
@@ -12,7 +16,6 @@ typedef enum buse_command
     BUSE_CMD_DISC,
     BUSE_CMD_FLUSH,
     BUSE_CMD_TRIM
-
 } buse_command_t;
 
 typedef struct buse_request
@@ -53,5 +56,10 @@ int NbdRequestDone(int nbd_socket, buse_request_t *request);
  * @param request request structure returned from get request function.
 ******************************************************************************/
 void NbdDestroyRequest(buse_request_t *request);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif /* __BUSE_H__*/

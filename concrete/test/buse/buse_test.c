@@ -19,6 +19,7 @@
 /*****************************************************************************/
 #define RUNNING (1)
 #define STOP_RUNNING (0)
+
 #define MB (1 << 20)
 static int InputRequest(void);
 static int32_t NbdServer(void);
@@ -51,7 +52,7 @@ static int32_t NbdServer(void)
     buse_request_t *request = NULL;
     int32_t server = RUNNING;
 
-    sock_fd = NbdOpen("/dev/nbd0", 512 * MB);
+    sock_fd = NbdOpen("/dev/nbd2", 512 * MB);
     if(-1 == sock_fd)
     {
         return (sock_fd);
@@ -78,14 +79,14 @@ static int32_t NbdServer(void)
         ready_fd = select(max_fd + 1, &read_fds, NULL, NULL, &timeout);
         if(ready_fd == -1)
         {
-            #ifdef BUSE_DEBUG
+            #ifdef PDC_DEBUG
             NbdLog("Select failed", __LINE__);
             #endif
             return (FailureNCleanUp(buffer));
         }
         else if(ready_fd == 0)
         {
-            #ifdef BUSE_DEBUG
+            #ifdef PDC_DEBUG
             NbdLog("No activity in server, [sec] passed:", time(NULL) - start_time);
             #endif
         }
@@ -141,7 +142,7 @@ static int HandleRequest(buse_request_t *request, void *buffer)
 
     case (BUSE_CMD_DISC):
 
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Got disconnection request.", 0);
         #endif
 
@@ -152,7 +153,7 @@ static int HandleRequest(buse_request_t *request, void *buffer)
 
     case (BUSE_CMD_FLUSH):
 
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Got flush request.", 0);
         #endif
 
@@ -160,7 +161,7 @@ static int HandleRequest(buse_request_t *request, void *buffer)
 
     case (BUSE_CMD_TRIM):
 
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Got flush request.", 0);
         #endif
 
@@ -180,7 +181,7 @@ static int InputRequest(void)
     char buffer[BUFSIZ] = {0};
     if(-1 == read(STDIN_FILENO, buffer, BUFSIZ))
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Read Input request failure.", 0);
         #endif
         return (STOP_RUNNING);
@@ -188,7 +189,7 @@ static int InputRequest(void)
 
     if(0 == strcmp(buffer, "quit\n"))
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdLog("Stop server request accepted.", 0);
         #endif
         raise(SIGTERM);
@@ -197,7 +198,7 @@ static int InputRequest(void)
 
     if(0 == strcmp(buffer, "-info\n"))
     {
-        #ifdef BUSE_DEBUG
+        #ifdef PDC_DEBUG
         NbdPrintLog();
         #else
         puts("Info is available in debugging mode");

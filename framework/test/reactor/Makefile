@@ -8,21 +8,21 @@ PROJ_SRCS= reactor_test.cpp
 
 # list of directories containing header files
 #PROJ_INC_DIR = $(ROOT_DIR)/include
-PROJ_INC_DIR= ../../include ../../../concrete/include
+PROJ_INC_DIR= ../../../concrete/include ../../../framework/include 
 
 # the executable file
 PROJ_OUT= reactor.out
 
 # list of ADDITIONAL compiler flags (prepended with "-" sign)
 #PROJ_CFLAGS = -Wunused-but-set-variable
-PROJ_CFLAGS=
-PROJ_CPPFLAGS=
+PROJ_CFLAGS= -DPDC_DEBUG
+PROJ_CPPFLAGS= -DPDC_DEBUG
 
 #PROJ_MACROS = _BSD_SOURCE
 PROJ_MACROS=
 
 # additional object files (created by other projects) .o or .obj for cpp
-PROJ_ADD_OBJS=
+PROJ_ADD_OBJS= imonitor.obj buse.o buse_logger.o
 
 # additional libraries
 PROJ_LIBS=
@@ -31,6 +31,6 @@ PROJ_LIBS=
 PROJ_LDFLAGS=
 
 # list of projects (makefiles) this project depends on
-PROJ_DEPENDS=
+PROJ_DEPENDS= ../imonitor/Makefile ../../../concrete/test/buse/Makefile
 
 include $(ROOT_DIR)/build/make/Project.mak
