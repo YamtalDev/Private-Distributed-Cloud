@@ -27,7 +27,7 @@
                          /* NBD_CLEAR_QUE, NBD_SET_SOCK,                    */
 
 #include "buse.h"        /* Internal API                                    */
-#include <buse_logger.h> /* Internal API                                    */
+#include "buse_logger.h" /* Internal API                                    */
 /*****************************************************************************/
 #ifdef WORDS_BIGENDIAN
 u_int64_t ntohll(u_int64_t a)

@@ -15,7 +15,7 @@
 #include <signal.h>      /* raise, SIGTERM       */
 
 #include "buse.h"        /* Internal API         */
-#include <buse_logger.h> /* Internal API         */
+#include "buse_logger.h" /* Internal API         */
 /*****************************************************************************/
 #define RUNNING (1)
 #define STOP_RUNNING (0)
